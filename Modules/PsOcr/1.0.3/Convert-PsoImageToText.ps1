@@ -34,8 +34,7 @@ function Convert-PsoImageToText
       .EXAMPLE
       Convert-ImageToText -Path c:\temp\image.png
       Converts the image in image.png to text
-      .NOTES
-      Original work from https://github.com/HumanEquivalentUnit/PowerShell-Misc
+      
 
   #>
   [CmdletBinding()]

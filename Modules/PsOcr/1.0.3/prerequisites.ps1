@@ -20,5 +20,3 @@ catch
   throw 'OCR requires Windows 10 and Windows PowerShell. You cannot use this module in PowerShell 7'
 }
 # define the class only AFTER all types have been loaded
-
-. "$PSScriptRoot\Convert-PsoImageToText.ps1"
