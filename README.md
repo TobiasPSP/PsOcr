@@ -47,6 +47,11 @@ Spath                                                                        Spa
 
 For good OCR results, it is important to choose the correct OCR language. `Convert-PsoImageText` supports the parameter `-Language` which comes with built-in argument completion and suggests all available OCR languages. Simply press `TAB` or `CTRL+SPACE` to see the available languages.
 
+```powershell
+Convert-PsoImageToText -Path c:\some\file.png -Language en-us
+```
+
+
 ## Technical Highlights
 
 Windows 10 OCR lives in a different world and uses WinRT technology. This technology primarily works asychronously to provide a UI experience without lags and delays.
@@ -131,6 +136,39 @@ Once this is in place, working with WinRT methods is actually pretty straight-fo
       Select-Object -Property Text, @{Name='Words';Expression={$_.Words.Text}}
 ```
 
+### Dynamic Autocompletion
+
+Which OCR engines are available to you depends largely on which languages you have installed on Windows 10. That's why the parameter `-Language` can have no fixed ValidateSet of available languages.
+
+Instead, I am using a lesser-known attribute that allows for dynamic autocompletions, and take the available OCR languages directly from the engine:
+
+```powershell
+param
+  (
+    [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+    [string]
+    [Alias('FullName')]
+    $Path,
+    
+    # dynamically create auto-completion from available OCR languages:
+    [ArgumentCompleter({
+          # receive information about current state:
+          param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    
+          [Windows.Media.Ocr.OcrEngine]::AvailableRecognizerLanguages |
+          Foreach-Object { 
+            # create completionresult items:
+            $displayname = $_.DisplayName
+            $id = $_.LanguageTag
+            [System.Management.Automation.CompletionResult]::new($id, $displayname, "ParameterValue", "$displayName`r`n$id")
+          }
+            })]
+    [Windows.Globalization.Language]
+    $Language
+  )
+```
+
+For more information on argument completion in PowerShell: https://powershell.one/powershell-internals/attributes/auto-completion
 ## Notes
 
 There is a lot of code floating around showing how to work with WinRT methods, and even how to perform OCR with *PowerShell*, so I definitely haven't invented this code or the technologies behind it. I just couldn't find an easy-to-use *PowerShell* module to do OCR which is why I researched and put together all I found in the Internet.
