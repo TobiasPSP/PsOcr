@@ -4,7 +4,7 @@ Windows 10 comes with built-in OCR, and **Windows PowerShell** can access the OC
 
 **Disclaimer:** There is plenty of code out there showing how to do OCR with *PowerShell* on *Windows 10* yet I did not find a *ready-to-use* module. That's why I created this one. So no, I neither have invented this nor did I invest too much thought into this. I primarily focused on usability and wrapping up what I found in different places as a easy-to-use *PowerShell* module. The most helpful initial reference I found was [this](https://github.com/HumanEquivalentUnit/PowerShell-Misc/blob/master/Get-Win10OcrTextFromImage.ps1).
 
-So what you find here should work like a snap to OCR images files. 
+So what you find here should work like a snap to mass-OCR any number of images files. 
 
 ## Install
 
