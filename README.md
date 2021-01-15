@@ -4,6 +4,8 @@ Windows 10 comes with built-in OCR, and **Windows PowerShell** can access the OC
 
 **Disclaimer:** There is plenty of code out there showing how to do OCR with *PowerShell* on *Windows 10* yet I did not find a *ready-to-use* module. That's why I created this one. So no, I neither have invented this nor did I invest too much thought into this. I primarily focused on usability and wrapping up what I found in different places as a easy-to-use *PowerShell* module. The most helpful initial reference I found was [this](https://github.com/HumanEquivalentUnit/PowerShell-Misc/blob/master/Get-Win10OcrTextFromImage.ps1).
 
+So what you find here should work like a snap to OCR images files. 
+
 ## Install
 
 Install the module from the *PowerShell Gallery*:
@@ -56,11 +58,11 @@ Convert-PsoImageToText -Path c:\some\file.png -Language en-us
 
 ## Technical Highlights
 
-Windows 10 OCR lives in a different world and uses WinRT technology. This technology primarily works asychronously to provide a UI experience without lags and delays.
+Windows 10 OCR lives in a different world and uses *WinRT* technology. This technology primarily works asychronously to provide a UI experience without lags and delays.
 
 To automate and access WinRT, there are two major challenges to overcome:
 
-- **Specific WinRT Types**: it is necessary to load the special WinRT types which isn't trivial (and won't work outside *Windows PowerShell* so you cannot use *PowerShell 7* for this.
+- **Specific WinRT Types**: it is necessary to load the special *WinRT* types which isn't trivial (and won't work outside *Windows PowerShell* so you cannot use *PowerShell 7* for this).
 - **Calling Async Methods**: PowerShell needs to invoke the async methods and wait for the results to come in. That requires access to a *await* method.
 
 ### Loading WinRT Types
