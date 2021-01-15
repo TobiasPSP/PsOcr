@@ -11,7 +11,7 @@ So what you find here should work like a snap to mass-OCR any number of images f
 Install the module from the *PowerShell Gallery*:
 
 ```powershell
-Install-Module -Name PsOct -Scope CurrentUser
+Install-Module -Name PsOcr -Scope CurrentUser
 ```
 
 ## Perform OCR
