@@ -6,7 +6,7 @@
 RootModule = 'root.ps1'
 
 # Version Number
-ModuleVersion = '1.0.1'
+ModuleVersion = '1.0.2'
 
 # Unique Module ID
 GUID = '8b8b571f-57e4-419b-97fe-ac61a5aaed34'
@@ -34,11 +34,11 @@ PowerShellHostName = ''
 PowerShellHostVersion = ''
 
 # List of exportable functions
-FunctionsToExport = 'Convert-PsoImageToText'
+FunctionsToExport = '*'
 
 
 # List of exportable aliases
-AliasesToExport = 'Convert-ImageToText'
+AliasesToExport = '*'
 
 # Private data that needs to be passed to this module
 PrivateData          = @{
