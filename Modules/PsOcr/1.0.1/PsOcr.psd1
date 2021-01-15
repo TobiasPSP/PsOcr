@@ -6,7 +6,7 @@
 RootModule = 'root.ps1'
 
 # Version Number
-ModuleVersion = '1.0.0'
+ModuleVersion = '1.0.1'
 
 # Unique Module ID
 GUID = '8b8b571f-57e4-419b-97fe-ac61a5aaed34'
