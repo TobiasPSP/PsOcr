@@ -87,9 +87,9 @@ Add-Type -AssemblyName System.Runtime.WindowsRuntime
 
 Only one assembly can be loaded in a classic way using `Add-Type`.
 
-A whole bunch of other types loads when the type definition contains more information than just the type name.
+A whole bunch of other types is loaded by reading the type, and in the type declaration submitting additional information. This may look weird as the result is discarded. The purpose is to make *PowerShell* load the required types into memory.
 
-Yet other types can only be loaded indirectly, i.e. by calling properties like *AvailableRecognizerLanguages*  which in turn loads the types of the returned objects.
+Yet other types can only be loaded indirectly, i.e. by calling properties like *AvailableRecognizerLanguages*  which in turn loads the types of the returned objects. Again the result is discarded, and the call was just used to provoke loading of types into memory.
 
 ### Implementing Await()
 
