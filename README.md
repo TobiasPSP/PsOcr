@@ -144,7 +144,7 @@ Once this is in place, working with WinRT methods is actually pretty straight-fo
 
 Which OCR engines are available to you depends largely on which languages you have installed on Windows 10. That's why the parameter `-Language` can have no fixed ValidateSet of available languages.
 
-Instead, I am using a lesser-known attribute (*[ArgumentCompleter()]*) that allows for dynamic autocompletions, and take the available OCR languages directly from the engine:
+Instead, I am using a lesser-known attribute (*[ArgumentCompleter()]*) that allows for dynamic autocompletions, and takes the available OCR languages directly from the engine:
 
 ```powershell
 param
