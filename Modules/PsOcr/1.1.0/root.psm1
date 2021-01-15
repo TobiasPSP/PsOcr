@@ -1,27 +1,39 @@
-﻿
-class AsyncHelper
+# make sure all required assemblies are loaded BEFORE any class definitions use them:
+try
 {
-  hidden static [System.Reflection.MethodInfo]$awaiter = $null
-  
-  # initialize the class
-  static AsyncHelper()
-  {    
-    Add-Type -AssemblyName System.Runtime.WindowsRuntime
-    # find the awaiter method
-    [AsyncHelper]::awaiter = [WindowsRuntimeSystemExtensions].GetMember('GetAwaiter', 'Method',  'Public,Static') |
-      Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' } |
-      Select-Object -First 1
-  }
-  
-  # invokes a async method and waits for the return values to be available:
+  Add-Type -AssemblyName System.Runtime.WindowsRuntime
+    
+  # WinRT assemblies are loaded indirectly:
+  $null = [Windows.Storage.StorageFile,                Windows.Storage,         ContentType = WindowsRuntime]
+  $null = [Windows.Media.Ocr.OcrEngine,                Windows.Foundation,      ContentType = WindowsRuntime]
+  $null = [Windows.Foundation.IAsyncOperation`1,       Windows.Foundation,      ContentType = WindowsRuntime]
+  $null = [Windows.Graphics.Imaging.SoftwareBitmap,    Windows.Foundation,      ContentType = WindowsRuntime]
+  $null = [Windows.Storage.Streams.RandomAccessStream, Windows.Storage.Streams, ContentType = WindowsRuntime]
+  $null = [WindowsRuntimeSystemExtensions]
+    
+  # some WinRT assemblies such as [Windows.Globalization.Language] are loaded indirectly by returning
+  # the object types:
+  $null = [Windows.Media.Ocr.OcrEngine]::AvailableRecognizerLanguages
 
-  static [object] Invoke([object]$AsyncTask, [Type]$ResultType)
+  # grab the async awaiter method:
+  Add-Type -AssemblyName System.Runtime.WindowsRuntime
+  # find the awaiter method
+  $awaiter = [WindowsRuntimeSystemExtensions].GetMember('GetAwaiter', 'Method',  'Public,Static') |
+  Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' } |
+  Select-Object -First 1
+
+  # define awaiter function
+  function Invoke-Async([object]$AsyncTask, [Type]$As)
   {
-    return [AsyncHelper]::awaiter.
-       MakeGenericMethod($ResultType).
-       Invoke($null, @($AsyncTask)).
-       GetResult()
+    return $awaiter.
+    MakeGenericMethod($As).
+    Invoke($null, @($AsyncTask)).
+    GetResult()
   }
+}
+catch
+{
+  throw 'OCR requires Windows 10 and Windows PowerShell. You cannot use this module in PowerShell 7'
 }
 
 function Convert-PsoImageToText
@@ -86,33 +98,31 @@ function Convert-PsoImageToText
   process
   {
     # all of these methods run asynchronously because they are tailored for responsive UIs
-    # PowerShell is single-threaded and synchronous so a helper class is used to 
+    # PowerShell is single-threaded and synchronous so a helper function is used to 
     # run the async methods and wait for them to complete, essentially reversing the async 
     # behavior
     
-    # [AsyncHelper]::Invoke() requires the async method and the desired return type
+    # Invoke() requires the async method and the desired return type
   
     # get image file:
     $file = [Windows.Storage.StorageFile]::GetFileFromPathAsync($path)
-    $storageFile = [AsyncHelper]::Invoke($file, [Windows.Storage.StorageFile])
+    $storageFile = Invoke-Async $file -As ([Windows.Storage.StorageFile])
   
     # read image content:
     $content = $storageFile.OpenAsync([Windows.Storage.FileAccessMode]::Read)
-    $fileStream = [AsyncHelper]::Invoke($content, [Windows.Storage.Streams.IRandomAccessStream])
+    $fileStream = Invoke-Async $content -As ([Windows.Storage.Streams.IRandomAccessStream])
   
     # get bitmap decoder:
     $decoder = [Windows.Graphics.Imaging.BitmapDecoder]::CreateAsync($fileStream)
-    $bitmapDecoder = [AsyncHelper]::Invoke($decoder, [Windows.Graphics.Imaging.BitmapDecoder])
+    $bitmapDecoder = Invoke-Async $decoder -As ([Windows.Graphics.Imaging.BitmapDecoder])
   
     # decode bitmap:
     $bitmap = $bitmapDecoder.GetSoftwareBitmapAsync()
-    $softwareBitmap = [AsyncHelper]::Invoke($bitmap, [Windows.Graphics.Imaging.SoftwareBitmap])
+    $softwareBitmap = Invoke-Async $bitmap -As ([Windows.Graphics.Imaging.SoftwareBitmap])
   
     # do optical text recognition (OCR) and return lines and words:
     $ocrResult = $ocrEngine.RecognizeAsync($softwareBitmap)
-    [AsyncHelper]::Invoke($ocrResult, [Windows.Media.Ocr.OcrResult]).Lines | 
+    (Invoke-Async $ocrResult -As ([Windows.Media.Ocr.OcrResult])).Lines | 
       Select-Object -Property Text, @{Name='Words';Expression={$_.Words.Text}}
   }
 }
-
-Set-Alias -Name Convert-ImageToText -Value Convert-PsoImageToText

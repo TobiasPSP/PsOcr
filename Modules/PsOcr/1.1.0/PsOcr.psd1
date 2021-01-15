@@ -3,10 +3,10 @@
 @{
 
 # Module Loader File
-RootModule = 'root.ps1'
+RootModule = 'root.psm1'
 
 # Version Number
-ModuleVersion = '1.0.3'
+ModuleVersion = '1.1.0'
 
 # Unique Module ID
 GUID = '8b8b571f-57e4-419b-97fe-ac61a5aaed34'
@@ -34,11 +34,7 @@ PowerShellHostName = ''
 PowerShellHostVersion = ''
 
 # List of exportable functions
-FunctionsToExport = '*'
-
-
-# List of exportable aliases
-AliasesToExport = '*'
+FunctionsToExport = 'Convert-PsoImageToText'
 
 # Private data that needs to be passed to this module
 PrivateData          = @{
